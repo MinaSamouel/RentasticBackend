@@ -1,0 +1,6 @@
+@RentasticBackEnd_HostAddress = http://localhost:5215
+
+GET {{RentasticBackEnd_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
