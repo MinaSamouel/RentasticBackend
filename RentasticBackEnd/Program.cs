@@ -1,6 +1,3 @@
-
-
-
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -35,6 +32,7 @@ namespace RentasticBackEnd
 
             //Add services for Repos
             builder.Services.AddScoped<IUserRepo, UserRepo>();
+            builder.Services.AddScoped<IReservationRepo, ReservationRepo>();
 
 
             //Add services for FluentValidation for validate the models
@@ -78,7 +76,6 @@ namespace RentasticBackEnd
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
