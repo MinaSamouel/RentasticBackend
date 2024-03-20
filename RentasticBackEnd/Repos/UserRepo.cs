@@ -1,4 +1,6 @@
-﻿namespace RentasticBackEnd.Repos
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RentasticBackEnd.Repos
 {
     public interface IUserRepo
     {
@@ -25,7 +27,14 @@
 
         public List<User> GetAllUsers()
         {
-            return _context.Users.ToList();
+            return _context.Users
+                .Include(u => u.Reviews)
+                .AsSplitQuery()
+                .Include(u => u.Reservations)
+                .AsSplitQuery()
+                .Include(u => u.FavoriteCars)
+                .AsSplitQuery()
+                .ToList();
         }
 
         public bool ExistsId(int id)
