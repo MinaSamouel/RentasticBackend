@@ -35,7 +35,7 @@ namespace RentasticBackEnd
 
             //Add services for Repos
             builder.Services.AddScoped<IUserRepo, UserRepo>();
-
+            builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 
             //Add services for FluentValidation for validate the models
             builder.Services.AddFluentValidationClientsideAdapters();
