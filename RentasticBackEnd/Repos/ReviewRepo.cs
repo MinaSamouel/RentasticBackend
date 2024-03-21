@@ -6,7 +6,7 @@
 
         // Review GetReviewById(int id);
 
-        Review GetReviewById(int carId,int userSsn, int reservationId);
+        Review? GetReviewById(int carId,int userSsn, int reservationId);
         Review Add(Review review);
         Review Update(Review review);
     }
@@ -33,7 +33,7 @@
         //        return null;
         //    return _context.Reviews.FirstOrDefault(e=>e.UserSsn == id);
         //}
-        public Review GetReviewById(int carId, int userSsn, int reservationId)
+        public Review? GetReviewById(int carId, int userSsn, int reservationId)
         {
             return _context.Reviews.FirstOrDefault(r =>
                 r.CarId == carId

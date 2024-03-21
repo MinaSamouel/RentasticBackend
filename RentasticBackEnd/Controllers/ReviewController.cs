@@ -9,7 +9,7 @@ namespace RentasticBackEnd.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        CarRentalContext carRentalContext=new CarRentalContext();
+        //CarRentalContext carRentalContext=new CarRentalContext();
         private readonly IReviewRepo _reviewRepo;
 
         public ReviewController(IReviewRepo reviewRepo)
@@ -20,8 +20,8 @@ namespace RentasticBackEnd.Controllers
         [HttpGet("Reviews")]
         public IActionResult GetAllReviews()
         {
-            //var reviews = _reviewRepo.GetAllReviews();
-            var reviews= carRentalContext.Reviews.ToList();
+            var reviews = _reviewRepo.GetAllReviews();
+            //var reviews= carRentalContext.Reviews.ToList();
             return Ok(reviews);
         }
 
