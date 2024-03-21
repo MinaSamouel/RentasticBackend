@@ -15,6 +15,7 @@ public class CarsController : ControllerBase
 {
     private readonly ICarRepo _repo;
     private readonly IValidator<CarModel> _validator;
+    private readonly IValidator<RentDateModel> _dateValidator;
 
     readonly JsonSerializerOptions _options = new JsonSerializerOptions
     {
@@ -22,10 +23,59 @@ public class CarsController : ControllerBase
         WriteIndented = true
     };
 
-    public CarsController(ICarRepo repo, IValidator<CarModel> validator)
+    public CarsController(ICarRepo repo, IValidator<CarModel> validator, IValidator<RentDateModel> dateValidator)
     {
         _repo = repo;
         _validator = validator;
+        _dateValidator = dateValidator;
+    }
+
+    [HttpPost("ReservedTime")]
+    public IActionResult GetCarsReserved([FromBody] RentDateModel rentTime)
+    {
+        var result = _dateValidator.Validate(rentTime);
+        if (!result.IsValid)
+        {
+            var errors = new List<string>();
+            foreach (var error in result.Errors)
+            {
+                errors.Add("Validation Felis: " + error.ErrorMessage);
+            }
+            return BadRequest(errors);
+        }
+
+        var startDate = new DateTime(int.Parse(rentTime.StartYear!), int.Parse(rentTime.StartMonth!),
+            int.Parse(rentTime.StartDay!));
+
+        var cars = _repo.GerCarRserved(startDate);
+
+        return Ok(JsonSerializer.Serialize(cars, _options));
+    }
+
+    [HttpPost("AvailabeDate")]
+    public IActionResult GetCarsAvailable([FromBody] RentDateModel rentTime)
+    {
+        var result = _dateValidator.Validate(rentTime);
+        if (!result.IsValid)
+        {
+            var errors = new List<string>();
+            foreach (var error in result.Errors)
+            {
+                errors.Add("Validation Felis: " + error.ErrorMessage);
+            }
+            return BadRequest(errors);
+        }
+
+        var startDate = new DateTime(int.Parse(rentTime.StartYear!), int.Parse(rentTime.StartMonth!),
+                       int.Parse(rentTime.StartDay!));
+
+        var cars = _repo.GerCarRserved(startDate);
+
+        var allCars = _repo.GetAllCars();
+
+        var availableCars = allCars.Except(cars).ToList();
+
+        return Ok(JsonSerializer.Serialize(availableCars, _options));
     }
 
     [HttpGet] 
@@ -136,6 +186,7 @@ public class CarsController : ControllerBase
         return Ok("Car Updated Successfully");
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public IActionResult DeleteCar(int id)
     {

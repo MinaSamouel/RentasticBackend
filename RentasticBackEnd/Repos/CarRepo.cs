@@ -6,6 +6,7 @@ public interface ICarRepo
 {
     List<Car> GetAllCars();
     List<Car> GetCarsAdmin();
+    List<Car> GerCarRserved(DateTime start); // Get cars that are res
     bool ExistsId(int id);
     Car? GetById(int id);
     Car? GetCarAdmin(int id);
@@ -40,6 +41,17 @@ public class CarRepo : ICarRepo
             .Include(c => c.FavoriteCars)
             .AsSplitQuery()
             .ToList();
+    }
+
+    public List<Car> GerCarRserved(DateTime start)
+    {
+        var cars = _context.Cars
+            .Include(c => c.Reservations)
+            .AsSplitQuery()
+            .Where(c => c.Reservations.Any(r => r.StartRentTime <= start && r.EndRentDate >= start))
+            .ToList();
+        return cars;
+
     }
 
     public bool ExistsId(int id)

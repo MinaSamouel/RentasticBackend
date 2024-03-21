@@ -42,6 +42,7 @@ namespace RentasticBackEnd
             builder.Services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
             builder.Services.AddScoped<IValidator<LoginModel>, LoginValidator>();
             builder.Services.AddScoped<IValidator<CarModel>, CarValidator>();
+            builder.Services.AddScoped<IValidator<RentDateModel>, RentDateValidator>();
 
 
             //Add services for Identity
