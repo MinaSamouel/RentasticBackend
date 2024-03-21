@@ -31,7 +31,7 @@ namespace RentasticBackEnd.Controllers
             _userManager = userManager;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllUsers()
         {
