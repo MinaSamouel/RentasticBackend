@@ -35,12 +35,14 @@ namespace RentasticBackEnd
 
             //Add services for Repos
             builder.Services.AddScoped<IUserRepo, UserRepo>();
-
+            builder.Services.AddScoped<ICarRepo, CarRepo>();
 
             //Add services for FluentValidation for validate the models
             builder.Services.AddFluentValidationClientsideAdapters();
             builder.Services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
             builder.Services.AddScoped<IValidator<LoginModel>, LoginValidator>();
+            builder.Services.AddScoped<IValidator<CarModel>, CarValidator>();
+            builder.Services.AddScoped<IValidator<RentDateModel>, RentDateValidator>();
 
 
             //Add services for Identity
