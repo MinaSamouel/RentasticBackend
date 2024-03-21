@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RentasticBackEnd.DTO;
 using RentasticBackEnd.Repos;
@@ -11,12 +13,14 @@ namespace RentasticBackEnd.Controllers
     {
         //CarRentalContext carRentalContext=new CarRentalContext();
         private readonly IReviewRepo _reviewRepo;
+        private readonly IValidator<ReviewModel> validator;
 
-        public ReviewController(IReviewRepo reviewRepo)
+        public ReviewController(IReviewRepo reviewRepo,IValidator<ReviewModel> validator)
         {
             _reviewRepo = reviewRepo;
+            this.validator = validator;
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpGet("Reviews")]
         public IActionResult GetAllReviews()
         {
@@ -35,10 +39,20 @@ namespace RentasticBackEnd.Controllers
             }
             return Ok(review);
         }
-
+        [Authorize]
         [HttpPost("AddReview")]
-        public IActionResult AddReview(ReviewModel model)
-        {
+        public IActionResult AddReview([FromBody]ReviewModel model)
+        {  
+            var result = validator.Validate(model);
+            if(!result.IsValid) 
+            {
+                var errors = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
+            }
             var reviewToAdd = new Review
             {
                 UserSsn = model.UserSsn,
@@ -50,10 +64,21 @@ namespace RentasticBackEnd.Controllers
             _reviewRepo.Add(reviewToAdd);
             return Ok("Review Added");
         }
-
+        [Authorize]
         [HttpPut("EditReview")]
         public IActionResult EditReview(ReviewModel model)
         {
+            var result = validator.Validate(model);
+            if (!result.IsValid)
+            {
+                var errors = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
+            }
+
             var existingReview = _reviewRepo.GetReviewById(model.CarId, model.UserSsn, model.ReservationId);
 
             if (existingReview == null)

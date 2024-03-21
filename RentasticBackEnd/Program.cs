@@ -41,7 +41,7 @@ namespace RentasticBackEnd
             builder.Services.AddFluentValidationClientsideAdapters();
             builder.Services.AddScoped<IValidator<RegisterModel>, RegisterValidator>();
             builder.Services.AddScoped<IValidator<LoginModel>, LoginValidator>();
-
+            builder.Services.AddScoped<IValidator<ReviewModel>, ReviewValidator>();
 
             //Add services for Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
