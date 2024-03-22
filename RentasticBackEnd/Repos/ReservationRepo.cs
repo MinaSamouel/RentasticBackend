@@ -1,8 +1,10 @@
-﻿namespace RentasticBackEnd.Repos
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RentasticBackEnd.Repos
 {
     public interface IReservationRepo
     {
-        List<Reservation> GetAllReservation();
+        IEnumerable<Reservation> GetAllReservations();
         Reservation GetReservationById(int id);
         Reservation Add(Reservation reservation);
         void Delete(int id);
@@ -17,17 +19,13 @@
             _context = context;
         }
 
-        public List<Reservation> GetAllReservation()
+        public IEnumerable<Reservation> GetAllReservations()
         {
-            return _context.Reservations.ToList();
+            return _context.Reservations.Include(r => r.User).Include(r => r.Car).ToList();
         }
         public Reservation GetReservationById(int id)
         {
-            if (!ReservationExists(id))
-            {
-                return null;
-            }
-            return _context.Reservations.FirstOrDefault(u => u.Id == id);
+            return _context.Reservations.Include(r => r.User).Include(r => r.Car).FirstOrDefault(r => r.Id == id);
         }
 
         public Reservation Add(Reservation reservation)
@@ -36,18 +34,13 @@
             _context.SaveChanges();
             return reservation;
         }
-
-        private bool ReservationExists(int id)
+                public void Delete(int id)
         {
-            return _context.Reservations.Any(e => e.Id == id);
-        }
-        public void Delete(int id)
-        {
-            var reservation = _context.Reservations.FirstOrDefault(r => r.Id == id);
-            if (reservation != null)
+            var reservationToDelete = _context.Reservations.Find(id);  // Find the reservation by ID
+            if (reservationToDelete != null)
             {
-                _context.Reservations.Remove(reservation);
-                _context.SaveChanges();
+                _context.Reservations.Remove(reservationToDelete);  // Mark for deletion
+                _context.SaveChanges();  // Persist changes to the database
             }
         }
     }

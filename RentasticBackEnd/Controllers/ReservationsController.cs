@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RentasticBackEnd.DTO;
 using RentasticBackEnd.Repos;
 using System;
@@ -20,7 +21,7 @@ namespace RentasticBackEnd.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ReservationDTO>> GetReservations()
         {
-            var reservations = _reservationRepo.GetAllReservation()
+            var reservations = _reservationRepo.GetAllReservations()
                 .Select(r => new ReservationDTO
                 {
                     Id = r.Id,
@@ -48,7 +49,7 @@ namespace RentasticBackEnd.Controllers
             var reservationDto = new ReservationDTO
             {
                 Id = reservation.Id,
-                UserSsn = reservation.UserSsn,
+                UserSsn = reservation.UserSsn,  // Consider using UserId later
                 CarId = reservation.CarId,
                 StartRentTime = reservation.StartRentTime,
                 EndRentDate = reservation.EndRentDate,
@@ -57,6 +58,7 @@ namespace RentasticBackEnd.Controllers
 
             return Ok(reservationDto);
         }
+
 
         [HttpPost]
         public ActionResult<ReservationDTO> PostReservation(ReservationDTO reservationDto)
@@ -74,9 +76,8 @@ namespace RentasticBackEnd.Controllers
 
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
-
         [HttpDelete("{id}")]
-        public ActionResult DeleteReservations(int id)
+        public ActionResult DeleteReservation(int id)
         {
             try
             {
@@ -91,11 +92,16 @@ namespace RentasticBackEnd.Controllers
 
                 return NoContent();
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting data");
+                return StatusCode(StatusCodes.Status409Conflict, "Cannot delete reservation due to database constraints");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while deleting the reservation");
             }
         }
+
 
     }
 }
