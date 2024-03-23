@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RentasticBackEnd.DTO;
+using RentasticBackEnd.Models;
 using RentasticBackEnd.Repos;
 
 namespace RentasticBackEnd.Controllers;
@@ -52,6 +53,7 @@ public class CarsController : ControllerBase
         return Ok(JsonSerializer.Serialize(cars, _options));
     }
 
+    [Authorize(Roles = "User")]
     [HttpPost("AvailabeDate")]
     public IActionResult GetCarsAvailable([FromBody] RentDateModel rentTime)
     {

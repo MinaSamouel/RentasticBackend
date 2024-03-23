@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RentasticBackEnd;
 using RentasticBackEnd.DTO;
 
+namespace RentasticBackEnd.Models;
 
 public class CarRentalContext : IdentityDbContext<ApplicationUser>
 {
@@ -23,7 +23,9 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-QHPRGSQ;Initial Catalog=CarRental;Integrated Security=True;Trust Server Certificate=True");
+        //optionsBuilder.UseSqlServer(@"Server=.;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Rehab and Esraaa
+        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Mina
+        //optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-QHPRGSQ;Initial Catalog=CarRental;Integrated Security=True;Trust Server Certificate=True"); //For Roubear
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

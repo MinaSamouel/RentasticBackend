@@ -27,6 +27,7 @@ public class FavouriteCarsController : ControllerBase
         _userRepo = userRepo;
     }
 
+    [Authorize(Roles = "User")]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] FavoriteCarsModel model)
     {

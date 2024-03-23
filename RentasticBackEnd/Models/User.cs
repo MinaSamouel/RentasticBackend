@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace RentasticBackEnd;
+namespace RentasticBackEnd.Models;
 
 public class User
 {

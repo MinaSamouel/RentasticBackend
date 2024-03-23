@@ -1,4 +1,4 @@
-﻿namespace RentasticBackEnd;
+﻿namespace RentasticBackEnd.Models;
 
 public class FavoriteCars
 {

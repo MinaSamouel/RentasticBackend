@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RentasticBackEnd.Models;
 
 namespace RentasticBackEnd.Repos;
 

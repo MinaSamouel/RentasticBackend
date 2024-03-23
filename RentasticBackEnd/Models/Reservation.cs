@@ -1,4 +1,4 @@
-﻿namespace RentasticBackEnd
+﻿namespace RentasticBackEnd.Models
 {
     public class Reservation
     {
@@ -9,9 +9,9 @@
         public DateTime EndRentDate { get; set; }
         public double TotalPrice { get; set; }
 
-        public Review Review { get; set; }
-        public User User { get; set; }
-        public Car Car { get; set; }
+        public Review Review { get; set; } = null!;
+        public User User { get; set; } = null!;
+        public Car Car { get; set; } = null!;
     }
 
 }
