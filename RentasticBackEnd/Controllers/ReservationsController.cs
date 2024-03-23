@@ -5,6 +5,8 @@ using RentasticBackEnd.Repos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using RentasticBackEnd.Models;
 
 namespace RentasticBackEnd.Controllers
 {
@@ -18,7 +20,7 @@ namespace RentasticBackEnd.Controllers
         {
             _reservationRepo = reservationRepo;
         }
-
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<ReservationDTO>> GetReservations()
         {
@@ -35,6 +37,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(reservations);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public ActionResult<ReservationDTO> GetReservation(int id)
         {
@@ -57,6 +60,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(reservationDto);
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public ActionResult<ReservationDTO> PostReservation([FromBody] ReservationDTO reservationDto)
         {
@@ -74,6 +78,7 @@ namespace RentasticBackEnd.Controllers
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public ActionResult DeleteReservation(int id)
         {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RentasticBackEnd.DTO;
+using RentasticBackEnd.Models;
 using RentasticBackEnd.Repos;
 
 namespace RentasticBackEnd.Controllers

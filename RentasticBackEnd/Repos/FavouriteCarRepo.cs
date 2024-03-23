@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using RentasticBackEnd.DTO;
+using RentasticBackEnd.Models;
 
 namespace RentasticBackEnd.Repos;
 

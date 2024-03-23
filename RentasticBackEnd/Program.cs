@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentasticBackEnd.DTO;
+using RentasticBackEnd.Models;
 using RentasticBackEnd.Repos;
 
 
@@ -72,6 +73,16 @@ namespace RentasticBackEnd
                 };
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigins",
+                    builder => builder
+                        .WithOrigins("http://127.0.0.1:5136", "http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                );
+            });
 
             var app = builder.Build();
 
@@ -87,7 +98,7 @@ namespace RentasticBackEnd
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors("AllowOrigins");
 
             app.MapControllers();
 
