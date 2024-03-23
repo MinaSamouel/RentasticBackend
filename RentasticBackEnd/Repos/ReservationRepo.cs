@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace RentasticBackEnd.Repos
 {
@@ -23,6 +24,7 @@ namespace RentasticBackEnd.Repos
         {
             return _context.Reservations.Include(r => r.User).Include(r => r.Car).ToList();
         }
+
         public Reservation GetReservationById(int id)
         {
             return _context.Reservations.Include(r => r.User).Include(r => r.Car).FirstOrDefault(r => r.Id == id);
@@ -34,13 +36,14 @@ namespace RentasticBackEnd.Repos
             _context.SaveChanges();
             return reservation;
         }
-                public void Delete(int id)
+
+        public void Delete(int id)
         {
-            var reservationToDelete = _context.Reservations.Find(id);  // Find the reservation by ID
+            var reservationToDelete = _context.Reservations.Find(id);
             if (reservationToDelete != null)
             {
-                _context.Reservations.Remove(reservationToDelete);  // Mark for deletion
-                _context.SaveChanges();  // Persist changes to the database
+                _context.Reservations.Remove(reservationToDelete);
+                _context.SaveChanges();
             }
         }
     }

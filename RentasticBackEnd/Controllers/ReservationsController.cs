@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RentasticBackEnd.DTO;
 using RentasticBackEnd.Repos;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RentasticBackEnd.Controllers
 {
@@ -24,14 +25,12 @@ namespace RentasticBackEnd.Controllers
             var reservations = _reservationRepo.GetAllReservations()
                 .Select(r => new ReservationDTO
                 {
-                    Id = r.Id,
                     UserSsn = r.UserSsn,
                     CarId = r.CarId,
                     StartRentTime = r.StartRentTime,
                     EndRentDate = r.EndRentDate,
                     TotalPrice = r.TotalPrice
-                })
-                .ToList();
+                }).ToList();
 
             return Ok(reservations);
         }
@@ -48,8 +47,7 @@ namespace RentasticBackEnd.Controllers
 
             var reservationDto = new ReservationDTO
             {
-                Id = reservation.Id,
-                UserSsn = reservation.UserSsn,  // Consider using UserId later
+                UserSsn = reservation.UserSsn,
                 CarId = reservation.CarId,
                 StartRentTime = reservation.StartRentTime,
                 EndRentDate = reservation.EndRentDate,
@@ -59,9 +57,8 @@ namespace RentasticBackEnd.Controllers
             return Ok(reservationDto);
         }
 
-
         [HttpPost]
-        public ActionResult<ReservationDTO> PostReservation(ReservationDTO reservationDto)
+        public ActionResult<ReservationDTO> PostReservation([FromBody] ReservationDTO reservationDto)
         {
             var reservation = new Reservation
             {
@@ -76,32 +73,19 @@ namespace RentasticBackEnd.Controllers
 
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
+
         [HttpDelete("{id}")]
         public ActionResult DeleteReservation(int id)
         {
-            try
-            {
-                var reservationToDelete = _reservationRepo.GetReservationById(id);
+            var reservationToDelete = _reservationRepo.GetReservationById(id);
 
-                if (reservationToDelete == null)
-                {
-                    return NotFound($"Reservation with Id = {id} not found");
-                }
-
-                _reservationRepo.Delete(id);
-
-                return NoContent();
-            }
-            catch (DbUpdateException ex)
+            if (reservationToDelete == null)
             {
-                return StatusCode(StatusCodes.Status409Conflict, "Cannot delete reservation due to database constraints");
+                return NotFound($"Reservation with Id = {id} not found");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while deleting the reservation");
-            }
+
+            _reservationRepo.Delete(id);
+            return NoContent();
         }
-
-
     }
 }

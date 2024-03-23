@@ -1,33 +1,42 @@
-﻿using FluentValidation;
-using System;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RentasticBackEnd.DTO
 {
     public class ReservationDTO
     {
-        public int Id { get; set; }
-
+        [Required(ErrorMessage = "User SSN is required.")]
         public int UserSsn { get; set; }
+
+        [Required(ErrorMessage = "Car ID is required.")]
         public int CarId { get; set; }
 
+        [Required(ErrorMessage = "Start rent time is required.")]
+        [DataType(DataType.DateTime)]
         public DateTime StartRentTime { get; set; }
 
+        [Required(ErrorMessage = "End rent date is required.")]
+        [DataType(DataType.DateTime)]
+        [EndDateMustBeGreaterThanStartDate(ErrorMessage = "End rent date should be after start rent time.")]
         public DateTime EndRentDate { get; set; }
 
+        [Required(ErrorMessage = "Total price is required.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Total price should be greater than 0.")]
         public double TotalPrice { get; set; }
     }
-    
-    public class CarReservationValidator : AbstractValidator<ReservationDTO>
+
+    public class EndDateMustBeGreaterThanStartDateAttribute : ValidationAttribute
     {
-        public CarReservationValidator()
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            RuleFor(x => x.UserSsn).NotEmpty().WithMessage("User SSN is required.");
-            RuleFor(x => x.CarId).NotEmpty().WithMessage("Car ID is required.");
-            RuleFor(x => x.StartRentTime).NotEmpty().WithMessage("Start rent time is required.")
-                .GreaterThanOrEqualTo(DateTime.Now).WithMessage("Start rent time should not be in the past.");
-            RuleFor(x => x.EndRentDate).NotEmpty().WithMessage("End rent date is required.")
-                .GreaterThan(x => x.StartRentTime).WithMessage("End rent date should be after start rent time.");
-            RuleFor(x => x.TotalPrice).GreaterThan(0).WithMessage("Total price should be greater than 0.");
+            var model = (ReservationDTO)validationContext.ObjectInstance;
+
+            if (model.StartRentTime >= model.EndRentDate)
+            {
+                return new ValidationResult(ErrorMessage);
+            }
+
+            return ValidationResult.Success;
         }
     }
 }
