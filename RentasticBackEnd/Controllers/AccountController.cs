@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -85,6 +86,7 @@ namespace RentasticBackEnd.Controllers
             return Ok("User Created");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("registerAdmin")]
         public async Task<IActionResult> RegisterAdmin(RegisterModel model)
         {
