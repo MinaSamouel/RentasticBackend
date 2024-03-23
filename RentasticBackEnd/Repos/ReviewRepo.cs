@@ -1,4 +1,6 @@
-﻿namespace RentasticBackEnd.Repos
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RentasticBackEnd.Repos
 {
     public interface IReviewRepo
     {

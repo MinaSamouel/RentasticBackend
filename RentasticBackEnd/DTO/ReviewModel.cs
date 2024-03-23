@@ -6,7 +6,7 @@ namespace RentasticBackEnd.DTO
     {
         public int ReservationId { get; set; }
         public int CarId { get; set; }
-        public int UserSsn { get; set; }
+        public string UserGuid { get; set; }
 
         public string Message { get; set; } = null!;
         public int Rate { get; set; }
@@ -24,9 +24,9 @@ namespace RentasticBackEnd.DTO
                 .NotEmpty().WithMessage("CarId is required")
                 .GreaterThan(0).WithMessage("The CarId must be Greater Than zero");
 
-            RuleFor(r => r.UserSsn)
-                .NotEmpty().WithMessage("UserSsn is required")
-                .GreaterThan(0).WithMessage("The UserSsn must be Greater Than zero");
+            RuleFor(r => r.UserGuid)
+                .NotEmpty().WithMessage("UserGuid is required")
+                .Length(10,50).WithMessage("The UserGuid must be between 10 and 50 characters");
 
             RuleFor(r => r.Message)
                 .NotEmpty().WithMessage("Message is required")
