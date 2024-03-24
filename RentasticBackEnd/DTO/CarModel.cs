@@ -15,6 +15,7 @@ public class CarModel
 
     public bool IsAutomatic { get; set; }
     public bool HasAirCondition { get; set; } = true;
+    public string? Description { get; set; }
 }
 
 public class CarValidator : AbstractValidator<CarModel>
@@ -52,5 +53,8 @@ public class CarValidator : AbstractValidator<CarModel>
         RuleFor(c => c.Images)
             .NotEmpty().WithMessage("Images is required");
 
+        RuleFor(c => c.Description)
+            .NotEmpty().WithMessage("Description is required")
+            .Length(10, 500).WithMessage("Description should be between 10 and 500 character");
     }
 }

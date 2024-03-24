@@ -90,6 +90,10 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
             .IsRequired()
             .HasColumnType("bit");
 
+        modelBuilder.Entity<Car>()
+            .Property(c => c.Description)
+            .IsRequired();
+
         #endregion
 
         #region Creating the Users table
@@ -97,6 +101,7 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<User>()
             .Property(u => u.Ssn)
             .HasColumnName("Ssn");
+
         modelBuilder.Entity<User>()
             .HasKey(u => u.Ssn);
 
@@ -128,25 +133,29 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
             .IsRequired();
 
         modelBuilder.Entity<User>()
-            .HasIndex(u => u.PhoneNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<User>()
             .Property(u => u.Address)
-            .HasColumnType("nvarchar(200)")
-            .IsRequired();
+            .HasColumnType("nvarchar(500)")
+            .IsRequired(required: false);
 
         modelBuilder.Entity<User>()
             .Property(u => u.Image)
-            .IsRequired();
+            .IsRequired(required: false);
 
         modelBuilder.Entity<User>()
             .Property(u => u.IsAdmin)
             .HasDefaultValue(false)
             .HasColumnType("bit");
 
+        modelBuilder.Entity<User>()
+            .Property(u => u.NationalIdentityNumber)
+            .HasColumnType("nvarchar(14)");
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.NationalIdentityNumber)
+            .IsUnique();
 
         #endregion
+
 
         #region Creating the FavoriteCars table
         // Creating the FavoriteCars table

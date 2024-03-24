@@ -6,7 +6,7 @@ namespace RentasticBackEnd.DTO
     {
         public int ReservationId { get; set; }
         public int CarId { get; set; }
-        public string UserGuid { get; set; }
+        public string? UserGuid { get; set; }
 
         public string Message { get; set; } = null!;
         public int Rate { get; set; }

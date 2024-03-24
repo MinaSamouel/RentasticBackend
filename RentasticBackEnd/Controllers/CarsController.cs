@@ -145,9 +145,9 @@ public class CarsController : ControllerBase
             PricePerDay = carModel.PricePerDay,
             Images = carModel.Images,
             IsAutomatic = carModel.IsAutomatic,
-            HasAirCondition = carModel.HasAirCondition
+            HasAirCondition = carModel.HasAirCondition,
+            Description = carModel.Description
         };
-
         _repo.Add(car);
 
         return Ok("Car Added Successfully");
@@ -182,7 +182,7 @@ public class CarsController : ControllerBase
         carUpdate.Images = model.Images;
         carUpdate.IsAutomatic = model.IsAutomatic;
         carUpdate.HasAirCondition = model.HasAirCondition;
-
+        carUpdate.Description = model.Description;
         _repo.Update(carUpdate);
 
         return Ok("Car Updated Successfully");

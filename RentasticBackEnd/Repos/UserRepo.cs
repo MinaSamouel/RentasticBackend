@@ -8,10 +8,10 @@ namespace RentasticBackEnd.Repos
         List<User> GetAllUsers();
         bool ExistsId(int id);
         bool ExistsEmail(string email);
-        bool ExistsPhoneNumber(string phoneNumber);
+        bool ExistsNationalNumber(string phoneNumber);
         User? GetOneById(int id);
         User? GetOneByEmail(string email);
-        User? GetOneByPhoneNumber(string phoneNumber);
+        User? GetOneByNationalNumber(string nationalNumber);
         User Add(User user);
         User Update(User user);
         void Delete(User user);
@@ -48,9 +48,9 @@ namespace RentasticBackEnd.Repos
             return _context.Users.Any(e => e.Email == email);
         }
 
-        public bool ExistsPhoneNumber(string phoneNumber)
+        public bool ExistsNationalNumber(string nationalNumber)
         {
-            return _context.Users.Any(e => e.PhoneNumber == phoneNumber);
+            return _context.Users.Any(e => e.NationalIdentityNumber == nationalNumber);
         }
 
         public User? GetOneById(int id)
@@ -67,11 +67,11 @@ namespace RentasticBackEnd.Repos
             return _context.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public User? GetOneByPhoneNumber(string phoneNumber)
+        public User? GetOneByNationalNumber(string nationalNumber)
         {
-            if (!ExistsPhoneNumber(phoneNumber))
+            if (!ExistsNationalNumber(nationalNumber))
                 return null;
-            return _context.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber);
+            return _context.Users.FirstOrDefault(u => u.NationalIdentityNumber == nationalNumber);
         }
 
         public User Add(User user)

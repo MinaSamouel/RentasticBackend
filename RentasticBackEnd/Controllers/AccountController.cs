@@ -37,7 +37,7 @@ namespace RentasticBackEnd.Controllers
         public async Task<IActionResult> Register(RegisterModel model)
         {
             var validationResult = _registorValidator.Validate(model);
-            
+
             //Validate the data before sending it to the database
             if (!validationResult.IsValid)
             {
@@ -46,12 +46,11 @@ namespace RentasticBackEnd.Controllers
                 {
                     errors.Add("Validation Field :" + error.ErrorMessage);
                 }
-
                 return BadRequest(errors);
             }
 
             //Check if the user already exists
-            if (_userRepo.ExistsEmail(model.Email) || _userRepo.ExistsPhoneNumber(model.PhoneNumber))
+            if (_userRepo.ExistsEmail(model.Email) || _userRepo.ExistsNationalNumber(model.NationalIdentityNumber))
             {
                 return BadRequest("User Already Exists");
             }
@@ -80,8 +79,8 @@ namespace RentasticBackEnd.Controllers
                 Address = model.Address,
                 Image = model.Image,
                 IsAdmin = false,
+                NationalIdentityNumber = model.NationalIdentityNumber
             };
-
             _userRepo.Add(userToAdd);
 
             return Ok("User Created");
@@ -106,7 +105,7 @@ namespace RentasticBackEnd.Controllers
             }
 
             //Check if the user already exists
-            if (_userRepo.ExistsEmail(model.Email) || _userRepo.ExistsPhoneNumber(model.PhoneNumber))
+            if (_userRepo.ExistsEmail(model.Email) || _userRepo.ExistsNationalNumber(model.NationalIdentityNumber))
             {
                 return BadRequest("User Already Exists");
             }
@@ -132,10 +131,10 @@ namespace RentasticBackEnd.Controllers
                 PhoneNumber = model.PhoneNumber,
                 Password = model.Password,
                 Address = model.Address,
-                Image = model.Image,
+                Image = model.Image!,
                 IsAdmin = true,
+                NationalIdentityNumber = model.NationalIdentityNumber
             };
-
             _userRepo.Add(userToAdd);
 
             return Ok("Admin Created");
@@ -185,7 +184,6 @@ namespace RentasticBackEnd.Controllers
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]!));
             var signingCredentioal = new SigningCredentials(key: securityKey, SecurityAlgorithms.HmacSha256);
-
             JwtSecurityToken myToken = new JwtSecurityToken(
                 issuer: _config["Jwt:ValidIssuer"],
                 audience: _config["Jwt:ValidAudience"],
