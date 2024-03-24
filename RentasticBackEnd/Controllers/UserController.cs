@@ -31,7 +31,7 @@ namespace RentasticBackEnd.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllUsers()
         {
@@ -61,7 +61,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(serializedUser);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] RegisterModel model)
         {
@@ -78,13 +78,11 @@ namespace RentasticBackEnd.Controllers
                 {
                     errors.Add("Validation Field :" + error.ErrorMessage);
                 }
-
                 return BadRequest(errors);
             }
 
             userCheck.UserName = model.Name;
             await _userManager.UpdateAsync(userCheck);
-
             var updatedUser = _userRepo.GetOneByEmail(userCheck.Email!);
             updatedUser!.Name = model.Name;
             updatedUser.Address = model.Address;

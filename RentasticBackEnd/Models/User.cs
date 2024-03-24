@@ -9,9 +9,10 @@ public class User
     public string? Password { get; set; }
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
-    public string Address { get; set; } = null!;
-    public string Image { get; set; } = null!;
+    public string? Address { get; set; }
+    public string? Image { get; set; } 
     public bool IsAdmin { get; set; }
+    public string NationalIdentityNumber { get; set; } = "";
 
     public ICollection<FavoriteCars> FavoriteCars { get; set; } = new HashSet<FavoriteCars>();
     //public List<Car> Cars { get; set; }
