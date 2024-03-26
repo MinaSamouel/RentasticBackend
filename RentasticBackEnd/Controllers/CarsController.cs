@@ -150,14 +150,15 @@ public class CarsController : ControllerBase
         };
         _repo.Add(car);
 
-        return Ok("Car Added Successfully");
+        return Ok(new { message = "Car Added Successfully" });
+
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public IActionResult UpdateCar(int id, [FromBody] CarModel model)
     {
-        if(!_repo.ExistsId(id))
+        if (!_repo.ExistsId(id))
             return NotFound("There is no Car with that Id");
 
         var result = _validator.Validate(model);
@@ -185,7 +186,7 @@ public class CarsController : ControllerBase
         carUpdate.Description = model.Description;
         _repo.Update(carUpdate);
 
-        return Ok("Car Updated Successfully");
+        return Ok(new { message = "Car Updated Successfully" });
     }
 
     [Authorize(Roles = "Admin")]
@@ -198,7 +199,7 @@ public class CarsController : ControllerBase
         var car = _repo.GetById(id);
         _repo.Delete(car!);
 
-        return Ok("Car Deleted Successfully");
+        return Ok(new { message = "Car deleted Successfully" });
     }
 }
 
