@@ -39,7 +39,7 @@ Welcome to **Rentastic Backend**, a robust backend service designed to provide s
 
 # Team Work
 
-The AI-Based Question Generator project was developed by:
+The Rentastic project was developed by:
 
 - [Mina Samouel](https://github.com/MinaSamouel)
 - [Rehab Adel](https://github.com/Rehab-Adel)
