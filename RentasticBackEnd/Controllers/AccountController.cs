@@ -188,7 +188,7 @@ namespace RentasticBackEnd.Controllers
                 issuer: _config["Jwt:ValidIssuer"],
                 audience: _config["Jwt:ValidAudience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentioal
             );
 

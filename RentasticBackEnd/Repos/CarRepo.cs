@@ -27,7 +27,10 @@ public class CarRepo : ICarRepo
 
     public List<Car> GetAllCars()
     {
-        return _context.Cars.ToList();
+        return _context.Cars
+            .Include(c => c.Reviews)
+            .AsSplitQuery()
+            .ToList();
 
         
     }
@@ -65,7 +68,10 @@ public class CarRepo : ICarRepo
         if(!ExistsId(id))
             return null;
 
-        return _context.Cars.FirstOrDefault(c => c.Id == id);
+        return _context.Cars
+            .Include(c => c.Reviews)
+            .AsSplitQuery()
+            .FirstOrDefault(c => c.Id == id);
     }
 
     public Car? GetCarAdmin(int id)
