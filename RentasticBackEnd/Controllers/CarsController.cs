@@ -85,7 +85,7 @@ public class CarsController : ControllerBase
     {
         var cars = _repo.GetAllCars();
 
-        return Ok(cars);
+        return Ok(JsonSerializer.Serialize(cars, _options));
     }
 
     [Authorize(Roles = "Admin")]
@@ -104,7 +104,7 @@ public class CarsController : ControllerBase
             return NotFound("Ther is no Car with that Id");
 
         var car = _repo.GetById(id);
-        return Ok(car);
+        return Ok(JsonSerializer.Serialize(car, _options));
     }
 
     [Authorize(Roles = "Admin")]
