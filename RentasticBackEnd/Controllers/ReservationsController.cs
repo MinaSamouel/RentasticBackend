@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using RentasticBackEnd.Models;
 
 namespace RentasticBackEnd.Controllers
@@ -15,31 +16,28 @@ namespace RentasticBackEnd.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly IReservationRepo _reservationRepo;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserRepo _userRepo;
 
-        public ReservationsController(IReservationRepo reservationRepo)
+        public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo)
         {
             _reservationRepo = reservationRepo;
+            _userManager = userManager;
+            _userRepo = userRepo;
         }
+
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<ReservationDTO>> GetReservations()
+        public ActionResult<IEnumerable<Reservation>> GetReservations()
         {
-            var reservations = _reservationRepo.GetAllReservations()
-                .Select(r => new ReservationDTO
-                {
-                    UserSsn = r.UserSsn,
-                    CarId = r.CarId,
-                    StartRentTime = r.StartRentTime,
-                    EndRentDate = r.EndRentDate,
-                    TotalPrice = r.TotalPrice
-                }).ToList();
+            var reservations = _reservationRepo.GetAllReservations();
 
             return Ok(reservations);
         }
 
         [Authorize]
         [HttpGet("{id}")]
-        public ActionResult<ReservationDTO> GetReservation(int id)
+        public ActionResult<Reservation> GetReservation(int id)
         {
             var reservation = _reservationRepo.GetReservationById(id);
 
@@ -48,25 +46,32 @@ namespace RentasticBackEnd.Controllers
                 return NotFound();
             }
 
-            var reservationDto = new ReservationDTO
-            {
-                UserSsn = reservation.UserSsn,
-                CarId = reservation.CarId,
-                StartRentTime = reservation.StartRentTime,
-                EndRentDate = reservation.EndRentDate,
-                TotalPrice = reservation.TotalPrice
-            };
+            //var reservationDto = new ReservationDTO
+            //{
+            //    UserSsn = reservation.UserSsn,
+            //    CarId = reservation.CarId,
+            //    StartRentTime = reservation.StartRentTime,
+            //    EndRentDate = reservation.EndRentDate,
+            //    TotalPrice = reservation.TotalPrice
+            //};
 
-            return Ok(reservationDto);
+            return Ok(reservation);
         }
 
         [Authorize(Roles = "User")]
         [HttpPost]
-        public ActionResult<ReservationDTO> PostReservation([FromBody] ReservationDTO reservationDto)
+        public async Task<ActionResult<ReservationDTO>> PostReservation([FromBody] ReservationDTO reservationDto)
         {
+            var userLogin = await _userManager.FindByIdAsync(reservationDto.UserGuid);
+            if (userLogin == null)
+            {
+                return Unauthorized("UserNoteAllowed");
+            }
+
+            var checkUser = _userRepo.GetOneByEmail(userLogin.Email!);
             var reservation = new Reservation
             {
-                UserSsn = reservationDto.UserSsn,
+                UserSsn = checkUser!.Ssn,
                 CarId = reservationDto.CarId,
                 StartRentTime = reservationDto.StartRentTime,
                 EndRentDate = reservationDto.EndRentDate,
