@@ -18,12 +18,14 @@ namespace RentasticBackEnd.Controllers
         private readonly IReservationRepo _reservationRepo;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepo _userRepo;
+        private readonly ICarRepo _carRepo;
 
-        public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo)
+        public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo, ICarRepo carRepo)
         {
             _reservationRepo = reservationRepo;
             _userManager = userManager;
             _userRepo = userRepo;
+            _carRepo = carRepo;
         }
 
         [Authorize]
@@ -69,6 +71,13 @@ namespace RentasticBackEnd.Controllers
             }
 
             var checkUser = _userRepo.GetOneByEmail(userLogin.Email!);
+
+            //Validation For the car is taken
+            var reservedCar = _carRepo.GetById(reservationDto.CarId);
+            var reservedCarsWithDate = _carRepo.GerCarRserved(reservationDto.StartRentTime);
+            if (reservedCarsWithDate.Count >0 && reservedCarsWithDate.Contains(reservedCar!))
+                return BadRequest("The Car Already Reserved with that Date");
+
             var reservation = new Reservation
             {
                 UserSsn = checkUser!.Ssn,
