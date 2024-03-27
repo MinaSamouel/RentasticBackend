@@ -6,17 +6,17 @@ namespace RentasticBackEnd.DTO
     public class ReservationDTO
     {
         [Required(ErrorMessage = "User SSN is required.")]
-        public int UserSsn { get; set; }
+        public string UserGuid { get; set; }
 
         [Required(ErrorMessage = "Car ID is required.")]
         public int CarId { get; set; }
 
         [Required(ErrorMessage = "Start rent time is required.")]
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         public DateTime StartRentTime { get; set; }
 
         [Required(ErrorMessage = "End rent date is required.")]
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [EndDateMustBeGreaterThanStartDate(ErrorMessage = "End rent date should be after start rent time.")]
         public DateTime EndRentDate { get; set; }
 
