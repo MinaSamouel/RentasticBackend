@@ -31,7 +31,7 @@ namespace RentasticBackEnd.Controllers
             _userManager = userManager;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllUsers()
         {
@@ -61,7 +61,34 @@ namespace RentasticBackEnd.Controllers
             return Ok(serializedUser);
         }
 
-        //[Authorize]
+        [Authorize(Roles = "User")]
+        [HttpGet("Logged/{id}")]
+        public async Task<IActionResult> GetUserId(string id)
+        {
+            var loginUser = await _userManager.FindByIdAsync(id);
+            if(loginUser == null) 
+                return NotFound("User isn't exist");
+
+            var checkUser = _userRepo.GetOneByEmail(loginUser.Email!);
+
+            var getUserfull = _userRepo.GetOneByIdUser(checkUser!.Ssn);
+
+            var returnedUser = new
+            {
+                UserId = getUserfull!.Ssn,
+                UserName = getUserfull.Name,
+                Email = getUserfull.Email,
+                PhoneNumber = getUserfull.PhoneNumber,
+                Address = getUserfull.Address,
+                Reservations = getUserfull.Reservations,
+                Reviews = getUserfull.Reviews,
+                FavouriteCars = getUserfull.FavoriteCars
+            };
+
+            return Ok(JsonSerializer.Serialize(returnedUser, _options));
+        }
+
+        [Authorize(Roles = "User")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] RegisterModel model)
         {

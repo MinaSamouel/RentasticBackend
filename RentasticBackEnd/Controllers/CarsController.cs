@@ -80,6 +80,13 @@ public class CarsController : ControllerBase
         return Ok(JsonSerializer.Serialize(availableCars, _options));
     }
 
+    [Authorize(Roles = "User")]
+    [HttpPost("checkReserved")]
+    public bool IsReserved([FromBody] IsReservd isReservd)
+    {
+        return _repo.IsReserved(isReservd.CarId, isReservd.StartRentDate);
+    }
+
     [HttpGet] 
     public IActionResult GetAllCars()
     {
