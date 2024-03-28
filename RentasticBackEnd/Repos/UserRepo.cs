@@ -15,6 +15,7 @@ namespace RentasticBackEnd.Repos
         User Add(User user);
         User Update(User user);
         void Delete(User user);
+        User? GetOneByIdUser(int id);
     }
 
     public class UserRepo : IUserRepo
@@ -58,6 +59,20 @@ namespace RentasticBackEnd.Repos
             if (!ExistsId(id))
                 return null;
             return _context.Users.FirstOrDefault(u => u.Ssn == id);
+        }
+
+        public User? GetOneByIdUser(int id)
+        {
+            if (!ExistsId(id))
+                return null;
+            return _context.Users
+                .Include(u => u.Reservations)
+                .AsSplitQuery()
+                .Include(u => u.Reviews)
+                .AsSplitQuery()
+                .Include(u => u.FavoriteCars)
+                .AsSplitQuery()
+                .FirstOrDefault(u => u.Ssn == id);
         }
 
         public User? GetOneByEmail(string email)

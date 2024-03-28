@@ -14,6 +14,7 @@ public interface ICarRepo
     Car Add(Car car);
     Car Update(Car car);
     void Delete(Car car);
+    bool IsReserved(int carId, DateTime start);
 }
 
 public class CarRepo : ICarRepo
@@ -56,6 +57,17 @@ public class CarRepo : ICarRepo
             .ToList();
         return cars;
 
+    }
+
+    public bool IsReserved(int carId, DateTime start)
+    {
+        var car = _context.Cars
+            .Include(c => c.Reservations)
+            .AsSplitQuery()
+            .Where(c => c.Reservations.Any(r => r.StartRentTime <= start && r.EndRentDate >= start))
+            .FirstOrDefault(c => c.Id == carId);
+
+        return car != null;
     }
 
     public bool ExistsId(int id)
