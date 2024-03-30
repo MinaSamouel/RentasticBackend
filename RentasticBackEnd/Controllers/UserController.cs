@@ -61,7 +61,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(serializedUser);
         }
 
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         [HttpGet("Logged/{id}")]
         public async Task<IActionResult> GetUserId(string id)
         {
@@ -101,14 +101,18 @@ namespace RentasticBackEnd.Controllers
 
             var returnedUser = new
             {
-                UserId = getUserfull!.Ssn,
-                UserName = getUserfull.Name,
+                Ssn = getUserfull!.Ssn,
+                Name = getUserfull.Name,
                 Email = getUserfull.Email,
                 PhoneNumber = getUserfull.PhoneNumber,
                 Address = getUserfull.Address,
+                Image= getUserfull.Image,
+                NationalIdentityNumber = getUserfull.NationalIdentityNumber,
                 Reservations = getUserfull.Reservations,
                 Reviews = getUserfull.Reviews,
-                FavouriteCars = getUserfull.FavoriteCars
+                FavoriteCars = getUserfull.FavoriteCars,
+                IsAdmin = getUserfull.IsAdmin,
+
             };
             return Ok(JsonSerializer.Serialize(returnedUser, _options));
         }
