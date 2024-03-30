@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,17 +27,15 @@ namespace RentasticBackEnd
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             
-
             builder.Services.AddDbContext<CarRentalContext>(options =>
                                options.UseSqlServer(builder.Configuration.GetConnectionString("Database1")));
-
 
             //Add services for Repos
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<IReservationRepo, ReservationRepo>();
-
             builder.Services.AddScoped<ICarRepo, CarRepo>();
-            builder.Services.AddScoped<IFavouriteCarRepo, FavouriteCarRepo>();            builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+            builder.Services.AddScoped<IFavouriteCarRepo, FavouriteCarRepo>();           
+            builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 
             //Add services for FluentValidation for validate the models
             builder.Services.AddFluentValidationClientsideAdapters();
