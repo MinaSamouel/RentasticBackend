@@ -70,8 +70,34 @@ namespace RentasticBackEnd.Controllers
                 return NotFound("User isn't exist");
 
             var checkUser = _userRepo.GetOneByEmail(loginUser.Email!);
-
             var getUserfull = _userRepo.GetOneByIdUser(checkUser!.Ssn);
+
+            //make the navigation property equal to null
+            if (getUserfull!.FavoriteCars.Count > 0)
+            {
+                foreach (var favoriteCar in getUserfull.FavoriteCars)
+                {
+                    favoriteCar.User = null!;
+                }
+            }
+            if (getUserfull.Reservations.Count > 0)
+            {
+                foreach (var reservation in getUserfull.Reservations)
+                {
+                    reservation.User = null!;
+                    reservation.Car = null!;
+                    reservation.Review = null!;
+                }
+            }
+            if (getUserfull.Reviews.Count > 0)
+            {
+                foreach (var review in getUserfull.Reviews)
+                {
+                    review.User = null!;
+                    review.Car = null!;
+                    review.Reservation= null!;
+                }
+            }
 
             var returnedUser = new
             {
@@ -84,7 +110,6 @@ namespace RentasticBackEnd.Controllers
                 Reviews = getUserfull.Reviews,
                 FavouriteCars = getUserfull.FavoriteCars
             };
-
             return Ok(JsonSerializer.Serialize(returnedUser, _options));
         }
 
