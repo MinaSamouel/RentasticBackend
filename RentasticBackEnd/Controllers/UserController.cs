@@ -143,6 +143,8 @@ namespace RentasticBackEnd.Controllers
             updatedUser!.Name = model.Name;
             updatedUser.Address = model.Address;
             updatedUser.Image = model.Image;
+            updatedUser.PhoneNumber = model.PhoneNumber;
+            updatedUser.NationalIdentityNumber = model.NationalIdentityNumber;
             var finalUser = _userRepo.Update(updatedUser);
 
             return Ok(JsonSerializer.Serialize(finalUser, _options));
