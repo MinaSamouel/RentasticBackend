@@ -62,10 +62,10 @@ namespace RentasticBackEnd.Controllers
         }
 
         //[Authorize(Roles = "User")]
-        [HttpGet("Logged/{id}")]
-        public async Task<IActionResult> GetUserId(string id)
+        [HttpGet("Logged/{guid}")]
+        public async Task<IActionResult> GetUserId(string guid)
         {
-            var loginUser = await _userManager.FindByIdAsync(id);
+            var loginUser = await _userManager.FindByIdAsync(guid);
             if(loginUser == null) 
                 return NotFound("User isn't exist");
 
@@ -118,11 +118,11 @@ namespace RentasticBackEnd.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] RegisterModel model)
+        [HttpPut("{guid}")]
+        public async Task<IActionResult> UpdateUser(string guid, [FromBody] RegisterModel model)
         {
-            //There is something missing here how to make sure user is updating his own data no someone else
-            var userCheck = await _userManager.FindByIdAsync(id);
+            //There is something missing here how to make sure user is updating his own data not someone else
+            var userCheck = await _userManager.FindByIdAsync(guid);
             if (userCheck == null)
                 return NotFound();
 
@@ -149,17 +149,19 @@ namespace RentasticBackEnd.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpDelete("{guid}")]
+        public async Task<IActionResult> DeleteUser(string guid)
         {
-            var checkUser = _userRepo.ExistsId(id);
-            if (!checkUser)
-                return NotFound();
-            
-            var user = _userRepo.GetOneById(id);
-            var userSign = await _userManager.FindByEmailAsync(user!.Email);
-            await _userManager.DeleteAsync(userSign!);
-            _userRepo.Delete(user);
+            var loginUser = await _userManager.FindByIdAsync(guid);
+            if (loginUser == null)
+                return NotFound("User Not exist");
+
+            var checkUser = _userRepo.GetOneByEmail(loginUser.Email!);
+            if (checkUser == null)
+                return NotFound("There is no user with gived Number");
+
+            _userRepo.Delete(checkUser);
+            await _userManager.DeleteAsync(loginUser);
 
             return Ok("User Deleted");
         }
