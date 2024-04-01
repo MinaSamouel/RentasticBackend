@@ -8,6 +8,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using RentasticBackEnd.Models;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace RentasticBackEnd.Controllers
 {
@@ -19,6 +21,12 @@ namespace RentasticBackEnd.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepo _userRepo;
         private readonly ICarRepo _carRepo;
+
+        readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true
+        };
 
         public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo, ICarRepo carRepo)
         {
@@ -34,7 +42,7 @@ namespace RentasticBackEnd.Controllers
         {
             var reservations = _reservationRepo.GetAllReservations();
 
-            return Ok(reservations);
+            return Ok(JsonSerializer.Serialize(reservations, _options));
         }
 
         [Authorize]
@@ -43,9 +51,9 @@ namespace RentasticBackEnd.Controllers
         {
             var reservation = _reservationRepo.GetReservationById(id);
 
-            if (reservation == null)
+            if (!_reservationRepo.IsExist(id))
             {
-                return NotFound();
+                return NotFound("Te reservation is not found");
             }
 
             //var reservationDto = new ReservationDTO
@@ -94,16 +102,16 @@ namespace RentasticBackEnd.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public ActionResult DeleteReservation(int id)
+        public IActionResult DeleteReservation(int id)
         {
-            var reservationToDelete = _reservationRepo.GetReservationById(id);
 
-            if (reservationToDelete == null)
+            if (!_reservationRepo.IsExist(id))
             {
-                return NotFound($"Reservation with Id = {id} not found");
+                return NotFound("The reservation is not exist");
             }
-
             _reservationRepo.Delete(id);
+          
+
             return NoContent();
         }
     }
