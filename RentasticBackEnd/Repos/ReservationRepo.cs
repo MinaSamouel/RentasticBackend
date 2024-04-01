@@ -9,6 +9,7 @@ namespace RentasticBackEnd.Repos
         IEnumerable<Reservation> GetAllReservations();
         Reservation GetReservationById(int id);
         Reservation Add(Reservation reservation);
+        bool IsExist(int id);
         void Delete(int id);
     }
 
@@ -23,12 +24,14 @@ namespace RentasticBackEnd.Repos
 
         public IEnumerable<Reservation> GetAllReservations()
         {
-            return _context.Reservations.Include(r => r.User).Include(r => r.Car).ToList();
+            return _context.Reservations
+                .ToList();
         }
 
         public Reservation GetReservationById(int id)
         {
-            return _context.Reservations.Include(r => r.User).Include(r => r.Car).FirstOrDefault(r => r.Id == id);
+            return _context.Reservations
+           .FirstOrDefault(r => r.Id == id);
         }
 
         public Reservation Add(Reservation reservation)
@@ -40,12 +43,17 @@ namespace RentasticBackEnd.Repos
 
         public void Delete(int id)
         {
-            var reservationToDelete = _context.Reservations.Find(id);
+            var reservationToDelete = _context.Reservations.FirstOrDefault(r=>r.Id == id);
             if (reservationToDelete != null)
             {
                 _context.Reservations.Remove(reservationToDelete);
                 _context.SaveChanges();
             }
+        }
+
+        public bool IsExist(int id)
+        {
+            return _context.Reservations.Any(r=>r.Id == id);
         }
     }
 }
