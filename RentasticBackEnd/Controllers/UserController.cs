@@ -17,6 +17,7 @@ namespace RentasticBackEnd.Controllers
         private readonly IUserRepo _userRepo;
         private readonly IValidator<RegisterModel> _validator;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ICarRepo _carRepo;
 
         readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
@@ -24,11 +25,12 @@ namespace RentasticBackEnd.Controllers
             WriteIndented = true
         };
 
-        public UserController(IUserRepo userRepo, IValidator<RegisterModel> validator, UserManager<ApplicationUser> userManager)
+        public UserController(IUserRepo userRepo, IValidator<RegisterModel> validator, UserManager<ApplicationUser> userManager, ICarRepo carRepo)
         {
             _userRepo = userRepo;
             _validator = validator;
             _userManager = userManager;
+            _carRepo = carRepo;
         }
 
         [Authorize(Roles = "Admin")]
@@ -73,19 +75,13 @@ namespace RentasticBackEnd.Controllers
             var getUserfull = _userRepo.GetOneByIdUser(checkUser!.Ssn);
 
             //make the navigation property equal to null
-            if (getUserfull!.FavoriteCars.Count > 0)
-            {
-                foreach (var favoriteCar in getUserfull.FavoriteCars)
-                {
-                    favoriteCar.User = null!;
-                }
-            }
-            if (getUserfull.Reservations.Count > 0)
+            
+            if (getUserfull!.Reservations.Count > 0)
             {
                 foreach (var reservation in getUserfull.Reservations)
                 {
                     reservation.User = null!;
-                    reservation.Car = null!;
+                    reservation.Car = _carRepo.GetByIdForUserLogged(reservation.CarId);
                     reservation.Review = null!;
                 }
             }
@@ -96,6 +92,14 @@ namespace RentasticBackEnd.Controllers
                     review.User = null!;
                     review.Car = null!;
                     review.Reservation= null!;
+                }
+            }
+            if (getUserfull!.FavoriteCars.Count > 0)
+            {
+                foreach (var favoriteCar in getUserfull.FavoriteCars)
+                {
+                    favoriteCar.User = null!;
+                    favoriteCar.Car = null!;
                 }
             }
 

@@ -100,7 +100,7 @@ namespace RentasticBackEnd.Controllers
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteReservation(int id)
         {
