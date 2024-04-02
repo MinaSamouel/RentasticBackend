@@ -15,6 +15,7 @@ public interface ICarRepo
     Car Update(Car car);
     void Delete(Car car);
     bool IsReserved(int carId, DateTime start);
+    Car GetByIdForUserLogged(int id);
 }
 
 public class CarRepo : ICarRepo
@@ -73,6 +74,11 @@ public class CarRepo : ICarRepo
     public bool ExistsId(int id)
     {
         return _context.Cars.Any(e => e.Id == id);
+    }
+
+    public Car GetByIdForUserLogged(int id)
+    {
+        return _context.Cars.FirstOrDefault(c => c.Id == id)!;
     }
 
     public Car? GetById(int id)
