@@ -126,10 +126,5 @@ namespace RentasticBackEnd.Controllers
             return Ok("Review updated successfully");
         }
 
-
-
-
-
-
     }
 }

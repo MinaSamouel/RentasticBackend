@@ -63,7 +63,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(serializedUser);
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [HttpGet("Logged/{guid}")]
         public async Task<IActionResult> GetUserId(string guid)
         {
@@ -81,8 +81,10 @@ namespace RentasticBackEnd.Controllers
                 foreach (var reservation in getUserfull.Reservations)
                 {
                     reservation.User = null!;
-                    reservation.Car = _carRepo.GetByIdForUserLogged(reservation.CarId);
                     reservation.Review = null!;
+                    reservation.Car = _carRepo.GetByIdForUserLogged(reservation.CarId);
+                    reservation.Car.Reservations = null!;
+                    reservation.Car.FavoriteCars = null!;
                 }
             }
             if (getUserfull.Reviews.Count > 0)

@@ -56,15 +56,6 @@ namespace RentasticBackEnd.Controllers
                 return NotFound("Te reservation is not found");
             }
 
-            //var reservationDto = new ReservationDTO
-            //{
-            //    UserSsn = reservation.UserSsn,
-            //    CarId = reservation.CarId,
-            //    StartRentTime = reservation.StartRentTime,
-            //    EndRentDate = reservation.EndRentDate,
-            //    TotalPrice = reservation.TotalPrice
-            //};
-
             return Ok(reservation);
         }
 
@@ -100,7 +91,7 @@ namespace RentasticBackEnd.Controllers
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteReservation(int id)
         {
