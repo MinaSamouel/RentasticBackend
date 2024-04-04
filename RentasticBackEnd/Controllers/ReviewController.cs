@@ -50,7 +50,6 @@ namespace RentasticBackEnd.Controllers
             var user = await  _userManager.FindByIdAsync(userGuid);
             if(user == null)
                 return NotFound("User not found");
-
             var loggedUser = _userRepo.GetOneByEmail(user.Email!);
             var review = _reviewRepo.GetReviewById(carId, loggedUser!.Ssn, reservationId);
 
@@ -125,11 +124,6 @@ namespace RentasticBackEnd.Controllers
 
             return Ok("Review updated successfully");
         }
-
-
-
-
-
 
     }
 }

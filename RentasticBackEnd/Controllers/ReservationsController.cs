@@ -21,6 +21,7 @@ namespace RentasticBackEnd.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepo _userRepo;
         private readonly ICarRepo _carRepo;
+        private readonly IReviewRepo _reviewRepo;
 
         readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
@@ -28,15 +29,16 @@ namespace RentasticBackEnd.Controllers
             WriteIndented = true
         };
 
-        public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo, ICarRepo carRepo)
+        public ReservationsController(IReservationRepo reservationRepo, UserManager<ApplicationUser> userManager, IUserRepo userRepo, ICarRepo carRepo, IReviewRepo reviewRepo)
         {
             _reservationRepo = reservationRepo;
             _userManager = userManager;
             _userRepo = userRepo;
             _carRepo = carRepo;
+            _reviewRepo = reviewRepo;
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Reservation>> GetReservations()
         {
@@ -45,7 +47,7 @@ namespace RentasticBackEnd.Controllers
             return Ok(JsonSerializer.Serialize(reservations, _options));
         }
 
-        [Authorize]
+      //  [Authorize]
         [HttpGet("{id}")]
         public ActionResult<Reservation> GetReservation(int id)
         {
@@ -56,19 +58,10 @@ namespace RentasticBackEnd.Controllers
                 return NotFound("Te reservation is not found");
             }
 
-            //var reservationDto = new ReservationDTO
-            //{
-            //    UserSsn = reservation.UserSsn,
-            //    CarId = reservation.CarId,
-            //    StartRentTime = reservation.StartRentTime,
-            //    EndRentDate = reservation.EndRentDate,
-            //    TotalPrice = reservation.TotalPrice
-            //};
-
             return Ok(reservation);
         }
 
-        [Authorize(Roles = "User")]
+      //  [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<ActionResult<ReservationDTO>> PostReservation([FromBody] ReservationDTO reservationDto)
         {
@@ -100,18 +93,20 @@ namespace RentasticBackEnd.Controllers
             return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservationDto);
         }
 
-        //[Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult DeleteReservation(int id)
         {
-
             if (!_reservationRepo.IsExist(id))
             {
                 return NotFound("The reservation is not exist");
             }
-            _reservationRepo.Delete(id);
-          
 
+            if (_reviewRepo.IsReservationExisted(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "A review exists for this reservation");
+            }
+            _reservationRepo.Delete(id);
             return NoContent();
         }
     }
