@@ -12,6 +12,7 @@ namespace RentasticBackEnd.Repos
         Review? GetReviewById(int carId,int userSsn, int reservationId);
         Review Add(Review review);
         Review Update(Review review);
+        bool IsReservationExisted(int reservationId);
     }
     public class ReviewRepo : IReviewRepo
     {
@@ -58,6 +59,11 @@ namespace RentasticBackEnd.Repos
             _context.Reviews.Update(review);
             _context.SaveChanges();
             return review;
+        }
+
+        public bool IsReservationExisted(int reservationId)
+        {
+            return _context.Reviews.Any(r=>r.ReservationId == reservationId);
         }
 
     }
