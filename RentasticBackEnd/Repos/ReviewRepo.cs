@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 using RentasticBackEnd.Models;
 
 namespace RentasticBackEnd.Repos
 {
     public interface IReviewRepo
     {
-        List<Review> GetAllReviews();
+        //List<Review> GetAllReviews();
+        ImmutableArray<Review> GetAllReviews();
 
         // Review GetReviewById(int id);
 
@@ -23,9 +25,9 @@ namespace RentasticBackEnd.Repos
             _context = context;
         }
 
-        public List<Review> GetAllReviews()
+        public ImmutableArray<Review> GetAllReviews()
         {
-            return _context.Reviews.ToList();
+            return _context.Reviews.ToImmutableArray();
         }
         //public bool ExistsId(int id)
         //{

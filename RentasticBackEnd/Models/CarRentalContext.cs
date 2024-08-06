@@ -11,6 +11,7 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
     public DbSet<FavoriteCars> FavoriteCars { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    private  string  ConnectionString => GetConnectionString();
 
     public CarRentalContext()
     {
@@ -23,9 +24,16 @@ public class CarRentalContext : IdentityDbContext<ApplicationUser>
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-       //  optionsBuilder.UseSqlServer(@"Server=.;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Rehab and Esraaa
-        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Mina
+        optionsBuilder.UseSqlServer(ConnectionString);
+        //optionsBuilder.UseSqlServer(@"Server=.;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Rehab and Esraaa
+        //optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=CarRental;Trusted_Connection=True;TrustServerCertificate=True;"); //For Mina
         //optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-QHPRGSQ;Initial Catalog=CarRental;Integrated Security=True;Trust Server Certificate=True"); //For Roubear
+    }
+
+    public string GetConnectionString()
+    {
+        var builder = WebApplication.CreateBuilder();
+        return builder.Configuration.GetConnectionString("DataBase1")!;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

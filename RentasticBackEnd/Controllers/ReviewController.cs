@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +22,14 @@ namespace RentasticBackEnd.Controllers
         private readonly IValidator<ReviewModel> validator;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepo _userRepo;
+        private readonly byte[] _encryptionKey = Encoding.UTF8.GetBytes("your-encryption-key-here"); // Must be 16, 24, or 32 bytes for AES
 
         readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             WriteIndented = true
         };
+
         public ReviewController(IReviewRepo reviewRepo,IValidator<ReviewModel> validator, UserManager<ApplicationUser> userManager, IUserRepo userRepo)
         {
             _reviewRepo = reviewRepo;
@@ -34,14 +38,38 @@ namespace RentasticBackEnd.Controllers
             _userRepo = userRepo;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("Reviews")]
         public IActionResult GetAllReviews()
         {
             var reviews = _reviewRepo.GetAllReviews();
             //var reviews= carRentalContext.Reviews.ToList();
-            return Ok(JsonSerializer.Serialize(reviews, _options));
+            return Ok(Encrypt(JsonSerializer.Serialize(reviews, _options)));
         }
+
+        private string Encrypt(string plainText)
+        {
+            using var aes = Aes.Create();
+            aes.Key = _encryptionKey;
+            aes.GenerateIV();
+
+            var iv = aes.IV;
+            using var encryptor = aes.CreateEncryptor(aes.Key, iv);
+            using var ms = new MemoryStream();
+            using var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+            using (var sw = new StreamWriter(cs))
+            {
+                sw.Write(plainText);
+            }
+
+            var encrypted = ms.ToArray();
+            var result = new byte[iv.Length + encrypted.Length];
+            Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+            Buffer.BlockCopy(encrypted, 0, result, iv.Length, encrypted.Length);
+
+            return Convert.ToBase64String(result);
+        }
+
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetReviewById")]
