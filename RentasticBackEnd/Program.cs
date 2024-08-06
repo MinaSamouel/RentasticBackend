@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RentasticBackEnd.DTO;
+using RentasticBackEnd.GenericRepo;
+using RentasticBackEnd.IGenericRepo;
 using RentasticBackEnd.Models;
 using RentasticBackEnd.Repos;
 
@@ -82,6 +84,9 @@ namespace RentasticBackEnd
                         .AllowCredentials()
                 );
             });
+
+            //add generic Repo 
+            builder.Services.AddScoped<IGenericRepository<Review>, GenericRepository<Review>>();
 
             var app = builder.Build();
 

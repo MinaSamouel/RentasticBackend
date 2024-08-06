@@ -2,71 +2,58 @@
 using Microsoft.EntityFrameworkCore;
 using RentasticBackEnd.Models;
 
-namespace RentasticBackEnd.Repos
+namespace RentasticBackEnd.Repos;
+
+public interface IReviewRepo
 {
-    public interface IReviewRepo
-    {
-        //List<Review> GetAllReviews();
-        ImmutableArray<Review> GetAllReviews();
-
-        // Review GetReviewById(int id);
-
-        Review? GetReviewById(int carId,int userSsn, int reservationId);
-        Review Add(Review review);
-        Review Update(Review review);
-        bool IsReservationExisted(int reservationId);
-    }
-    public class ReviewRepo : IReviewRepo
-    {
-        private readonly CarRentalContext _context;
-
-        public ReviewRepo(CarRentalContext context)
-        {
-            _context = context;
-        }
-
-        public ImmutableArray<Review> GetAllReviews()
-        {
-            return _context.Reviews.ToImmutableArray();
-        }
-        //public bool ExistsId(int id)
-        //{
-        //    return _context.Reviews.Any(e => e.UserSsn == id);
-        //}
-        //public Review? GetReviewById(int id)
-        //{
-        //    if (!ExistsId(id))
-        //        return null;
-        //    return _context.Reviews.FirstOrDefault(e=>e.UserSsn == id);
-        //}
-        public Review? GetReviewById(int carId, int userSsn, int reservationId)
-        {
-            return _context.Reviews.FirstOrDefault(r =>
-                r.CarId == carId
-                && r.UserSsn == userSsn
-                && r.ReservationId == reservationId);
-        }
-
-
-
-        public Review Add(Review review)
-        {
-            _context.Reviews.Add(review);
-            _context.SaveChanges();
-            return review;
-        }
-
-        public Review Update(Review review)
-        {
-            _context.Reviews.Update(review);
-            _context.SaveChanges();
-            return review;
-        }
-
-        public bool IsReservationExisted(int reservationId)
-        {
-            return _context.Reviews.Any(r=>r.ReservationId == reservationId);
-        }
-
-    }
+    //List<Review> GetAllReviews();
+    ImmutableArray<Review> GetAllReviews();
+    // Review GetReviewById(int id);
+    Review? GetReviewById(int carId,int userSsn, int reservationId);
+    Review Add(Review review);
+    Review Update(Review review);
+    bool IsReservationExisted(int reservationId);
 }
+public class ReviewRepo : IReviewRepo
+{
+    private readonly CarRentalContext _context;
+
+    public ReviewRepo(CarRentalContext context)
+    {
+        _context = context;
+    }
+
+    public ImmutableArray<Review> GetAllReviews()
+    {
+        return _context.Reviews.ToImmutableArray();
+    }
+    
+    public Review? GetReviewById(int carId, int userSsn, int reservationId)
+    {
+        return _context.Reviews.FirstOrDefault(r =>
+            r.CarId == carId
+            && r.UserSsn == userSsn
+            && r.ReservationId == reservationId);
+    }
+
+    public Review Add(Review review)
+    {
+        _context.Reviews.Add(review);
+        _context.SaveChanges();
+        return review;
+    }
+
+    public Review Update(Review review)
+    {
+        _context.Reviews.Update(review);
+        _context.SaveChanges();
+        return review;
+    }
+
+    public bool IsReservationExisted(int reservationId)
+    {
+        return _context.Reviews.Any(r=>r.ReservationId == reservationId);
+    }
+
+}
+
