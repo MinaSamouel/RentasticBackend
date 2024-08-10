@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,7 +13,7 @@ using RentasticBackEnd.IGenericRepo;
 using RentasticBackEnd.Models;
 using RentasticBackEnd.Repos;
 
-namespace RentasticBackEnd.Controllers;
+namespace RentasticBackEnd.ControllersG;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -74,7 +75,7 @@ public class ReviewGController : ControllerBase
     }
 
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpGet("GetReviewById")]
     public async Task<IActionResult> GetReviewById(int carId, string userGuid, int reservationId)
     {
@@ -82,7 +83,20 @@ public class ReviewGController : ControllerBase
         if(user == null)
             return NotFound("User not found");
         var loggedUser = _userRepo.GetOneByEmail(user.Email!);
-        var review = _reviewRepo.GetReviewById(carId, loggedUser!.Ssn, reservationId);
+
+        //var review = _reviewRepo.GetReviewById(carId, loggedUser!.Ssn, reservationId);
+
+        //Expression<Func<Review, bool>> filter = r => r.CarId == carId && r.UserSsn == loggedUser.Ssn && r.ReservationId == reservationId;
+
+        Expression<Func<Review, bool>> filter = r =>  r.UserSsn == loggedUser.Ssn;
+        Expression<Func<Review, object>>[] includes =
+        {
+            r => r.Car,
+            r => r.User,
+            
+        };
+
+        var review = _reviewGenericRepository.GetById(filter, includes);
 
         if (review == null)
         {
